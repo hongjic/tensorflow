@@ -314,6 +314,8 @@ class SyncReplicasOptimizer(optimizer.Optimizer):
 
       with ops.device(global_step.device), ops.name_scope(""):
         # Replicas have to wait until they can get a token from the token queue.
+        # `ops.control_dependencies` means token can run only after train_ops 
+        # have been executed
         with ops.control_dependencies(train_ops):
           token = sync_token_queue.dequeue()
         train_op = state_ops.assign(self._local_step, token)
